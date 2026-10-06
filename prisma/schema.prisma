@@ -1,0 +1,117 @@
+// Datamodell för "Offert från platsbesöket".
+// Belopp lagras i ören (heltal), procentsatser i baspunkter (1 % = 100)
+// och mängder i tusendelar (1 st = 1000) för att undvika flyttalsfel.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  id                 Int     @id @default(1)
+  name               String  @default("")
+  orgNumber          String  @default("")
+  address            String  @default("")
+  phone              String  @default("")
+  email              String  @default("")
+  website            String  @default("")
+  logoPath           String?
+  fSkatt             Boolean @default(false)
+  paymentTerms       String  @default("30 dagar netto")
+  validityDays       Int     @default(30)
+  introText          String  @default("")
+  termsText          String  @default("")
+  closingText        String  @default("")
+  hourlyRateOre      Int?
+  vatBp              Int     @default(2500)
+  // ROT lämnas tomt från start – reglerna ändras och ska kontrolleras hos Skatteverket.
+  rotPercentBp       Int?
+  rotMaxPerPersonOre Int?
+}
+
+model Article {
+  id             Int         @id @default(autoincrement())
+  number         String      @unique
+  name           String
+  type           String // arbete | material | övrigt
+  unit           String // st | m | m² | m³ | tim | paket
+  unitPriceOre   Int
+  markupBp       Int         @default(0)
+  isExamplePrice Boolean     @default(false)
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  lines          QuoteLine[]
+}
+
+model QuoteCounter {
+  year Int @id
+  last Int @default(0)
+}
+
+model Quote {
+  id                  Int          @id @default(autoincrement())
+  number              String       @unique
+  status              String       @default("utkast") // utkast | granskad | skickad | accepterad | avböjd
+  customerName        String
+  customerAddress     String       @default("")
+  customerPhone       String       @default("")
+  customerEmail       String       @default("")
+  propertyDesignation String       @default("")
+  notes               String       @default("")
+  transcript          String       @default("")
+  summary             String       @default("")
+  // JSON-listor med strängar, valideras med Zod vid läsning.
+  assumptions         String       @default("[]")
+  uncertainties       String       @default("[]")
+  customerQuestions   String       @default("[]")
+  exclusions          String       @default("[]")
+  introText           String       @default("")
+  termsText           String       @default("")
+  closingText         String       @default("")
+  rotEnabled          Boolean      @default(false)
+  rotPersons          Int          @default(1)
+  visualizationPath   String?
+  interpretedAt       DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  lines               QuoteLine[]
+  attachments         Attachment[]
+}
+
+model QuoteLine {
+  id            Int      @id @default(autoincrement())
+  quoteId       Int
+  quote         Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  position      Int
+  articleId     Int?
+  article       Article? @relation(fields: [articleId], references: [id], onDelete: SetNull)
+  articleNumber String?
+  description   String
+  quantityMilli Int
+  unit          String
+  type          String
+  unitPriceOre  Int?
+  markupBp      Int      @default(0)
+  priceSource   String? // prislista | timpris | manuell
+  source        String   @default("")
+  confidence    String   @default("hög") // hög | medel | låg
+  confirmed     Boolean  @default(false)
+  origin        String   @default("manuell") // ai | manuell
+}
+
+model Attachment {
+  id           Int      @id @default(autoincrement())
+  quoteId      Int
+  quote        Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  kind         String // audio | photo
+  path         String
+  mimeType     String
+  originalName String
+  size         Int
+  transcript   String?
+  createdAt    DateTime @default(now())
+}
