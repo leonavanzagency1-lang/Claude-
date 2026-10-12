@@ -6,6 +6,7 @@ Ett lokalt verktyg för hantverkare och byggfirmor. Efter platsbesöket spelar d
 
 ## Innehåll
 
+- [Snabbstart (enklast)](#snabbstart-enklast)
 - [Krav](#krav)
 - [Installation](#installation)
 - [Miljövariabler](#miljövariabler)
@@ -18,6 +19,14 @@ Ett lokalt verktyg för hantverkare och byggfirmor. Efter platsbesöket spelar d
 - [Projektstruktur](#projektstruktur)
 - [Kända begränsningar](#kända-begränsningar)
 - [Förslag på förbättringar](#förslag-på-förbättringar)
+
+## Snabbstart (enklast)
+
+1. Installera **Node.js** från <https://nodejs.org> (knappen **LTS**) och starta om datorn.
+2. Ladda ned appen: på GitHub, klicka **"<> Code"** och sedan **"Download ZIP"**, och packa upp ZIP-filen.
+3. Öppna den uppackade mappen och **dubbelklicka på `starta.bat`** (Windows) eller **`starta.command`** (Mac; första gången: högerklicka och välj **Öppna**).
+
+Filen installerar allt, skapar databasen med exempeldata och öppnar appen i webbläsaren på <http://localhost:3000>. **Låt det svarta fönstret vara öppet** medan du använder appen – stänger du det stängs appen. Nästa gång: dubbelklicka på samma fil igen.
 
 ## Krav
 

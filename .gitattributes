@@ -1,0 +1,2 @@
+# Windows-startfilen måste ha CRLF-radslut
+*.bat -text
